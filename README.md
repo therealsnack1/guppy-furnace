@@ -1,4 +1,6 @@
-# White Whale Furnace
+# Migaloo Furnace
+
+Burn $whale get $ash
 
 ## Quickstart
 
