@@ -46,6 +46,5 @@
       "cosmwasm"
     ]
   },
-  "leaderboard_data_endpoint": "https://api.subquery.network/sq/silvermind/whale-furnace-2",
   "furnace_contract_address": "migaloo1erul6xyq0gk6ws98ncj7lnq9l4jn4gnnu9we73gdz78yyl2lr7qqrvcgup"
 }
