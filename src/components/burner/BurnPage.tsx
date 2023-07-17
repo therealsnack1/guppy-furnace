@@ -64,10 +64,10 @@ const BurnPage = ({
                 width="550px"
                 background="rgba(0, 0, 0, 0.8)"
                 padding={5}
-                borderRadius="20px"
+                borderRadius="10px"
               >
                 <Flex>
-                  <Heading flex={13} color="white" fontSize="30px">
+                  <Heading flex={13} color="white" fontSize="28px">
                     Total WHALE Burned:
                   </Heading>
                   <Spacer flex={1} />
@@ -75,9 +75,9 @@ const BurnPage = ({
                     <Heading
                       color="brandGreen"
                       fontSize="30px"
-                      textAlign="center">
+                      textAlign="right">
                       {totalWhaleBurned != null
-                        ? totalWhaleBurned.toFixed(3)
+                        ? totalWhaleBurned.toFixed(0)
                         : "-"}
                     </Heading>
                   </Box>
