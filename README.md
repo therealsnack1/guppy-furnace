@@ -1,8 +1,16 @@
-# Migaloo Furnace
+# Community Furnace
 
-Burn $whale get $ash
+## Deployments
+### Migaloo Mainnet
+**Burn $whale get $ash**
+- https://whale.burn.community
+- [Contract: migaloo1erul6xyq0gk6ws98ncj7lnq9l4jn4gnnu9we73gdz78yyl2lr7qqrvcgup](https://deving.zone/en/cosmos/migaloo/addresses/migaloo1erul6xyq0gk6ws98ncj7lnq9l4jn4gnnu9we73gdz78yyl2lr7qqrvcgup)
 
-## Quickstart
+### your chain
+
+-> wen ❓
+
+## Dev Quickstart
 
 This will launch a local migaloo instance, compile and upload the burn contract, and starts the frontend.
 
