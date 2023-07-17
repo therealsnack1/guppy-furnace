@@ -46,6 +46,5 @@
       "cosmwasm"
     ]
   },
-  "leaderboard_data_endpoint": "http://localhost:3050/",
   "furnace_contract_address": ""
 }
