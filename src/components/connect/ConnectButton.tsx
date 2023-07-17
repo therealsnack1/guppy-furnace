@@ -31,7 +31,7 @@ const ConnectButton = ({ type }: ConnectButtonProps) => {
 
   const connectToCosmostation = useKeplrInterface(
     WalletClientType.cosmostation,
-    window.cosmostation.providers.keplr,
+    window.cosmostation,
     onError
   );
 
