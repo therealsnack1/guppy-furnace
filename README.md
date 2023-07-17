@@ -52,33 +52,6 @@ To configure the instance of migaloo you are connecting to, modify the chain inf
 
 The furnace contract address will be generated and updated in the config file at build time if using the docker quickstart command, else it must be manually edited with after uploading the furnance contract.
 
-The API endpoint for querying the leaderboard data should support paginated queries and return a response with data in the below JSON format, with nodes in descending order by totalBurn. The default is the endpoint set up after running the quickstart command.
-
-```yaml
-{
-  "data": {
-      "sumBurns":{
-         "nodes":[
-            {
-               "id":"migaloo19vs2t96yfjf22aa8ps9r4cemzkvz07c067zsvv",
-               "totalBurn":"28000000"
-            },
-            {
-               "id":"migaloo18rtnjxy6zt2xf24ln0m77re937vgl7kd8x7474",
-               "totalBurn":"4000000"
-            }
-            ...
-         ]
-      }
-}
-```
-
-Example paginated query:
-
-```bash
-http://localhost:3050/?query={sumBurns(orderBy:TOTAL_BURN_DESC,first:10,offset:0){nodes{id%20totalBurn}}}
-```
-
 ### Frontend Development
 
 ```bash
