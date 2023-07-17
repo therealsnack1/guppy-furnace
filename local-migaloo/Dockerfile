@@ -16,7 +16,7 @@ RUN go install github.com/hashrocket/ws@latest
 WORKDIR /cosmos-blockchain
 
 
-RUN git clone https://github.com/White-Whale-Defi-Platform/migaloo-chain . && git checkout v2.0.0
+RUN git clone https://github.com/White-Whale-Defi-Platform/migaloo-chain . && git checkout v2.2.5
 
 COPY download_wasm.sh /download_wasm.sh
 RUN /download_wasm.sh
