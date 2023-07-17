@@ -1,0 +1,51 @@
+{
+  "chain_info": {
+    "chainId": "local-1",
+    "chainName": "local_migaloo",
+    "rpc": "http://127.0.0.1:26657",
+    "rest": "http://127.0.0.1:1317",
+    "bip44": {
+      "coinType": 118
+    },
+    "bech32Config": {
+      "bech32PrefixAccAddr": "migaloo",
+      "bech32PrefixAccPub": "migaloopub",
+      "bech32PrefixValAddr": "migaloovaloper",
+      "bech32PrefixValPub": "migaloovaloperpub",
+      "bech32PrefixConsAddr": "migaloovalcons",
+      "bech32PrefixConsPub": "migaloovalconspub"
+    },
+    "currencies": [
+      {
+        "coinDenom": "WHALE",
+        "coinMinimalDenom": "uwhale",
+        "coinDecimals": 6,
+        "coinGeckoId": "white-whale"
+      }
+    ],
+    "feeCurrencies": [
+      {
+        "coinDenom": "WHALE",
+        "coinMinimalDenom": "uwhale",
+        "coinDecimals": 6,
+        "coinGeckoId": "white-whale",
+        "gasPriceStep": {
+          "low": 0,
+          "average": 0,
+          "high": 0
+        }
+      }
+    ],
+    "stakeCurrency": {
+      "coinDenom": "WHALE",
+      "coinMinimalDenom": "uwhale",
+      "coinDecimals": 6,
+      "coinGeckoId": "white-whale"
+    },
+    "features": [
+      "cosmwasm"
+    ]
+  },
+  "leaderboard_data_endpoint": "http://localhost:3050/",
+  "furnace_contract_address": ""
+}
