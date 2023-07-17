@@ -23,9 +23,9 @@ Run optional service to create several temporary accounts that burn Whale
 
 ```shell
 # run this instead of above command
-docker-compose --profile burner up
+docker compose --profile burner up
 # Or if local chain is running already
-docker-compose up burner-accounts
+docker compose up burner-accounts
 ```
 
 ## Development
