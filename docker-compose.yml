@@ -12,6 +12,7 @@ services:
       - "if [ -e /root/.migalood/config/genesis.json ]; then echo \"Genesis exists\"; else /config.sh; fi"
     volumes:
       - "./.migalood:/root/.migalood"
+
   local-migaloo:
     build:
       context: ./local-migaloo
@@ -42,6 +43,7 @@ services:
       - type: volume
         source: registry_cache
         target: /usr/local/cargo/registry
+
   upload-contract:
     build:
       context: ./local-migaloo
@@ -73,7 +75,6 @@ services:
       - "./.migalood:/root/.migalood"
       - "./public/config.json:/public/config.json"
     depends_on:
-
       local-migaloo:
         condition: service_healthy
 
@@ -93,107 +94,6 @@ services:
     depends_on:
       upload-contract:
         condition: service_completed_successfully
-
-#  SubQuery stack
-
-  subquery-node-build:
-    image: onfinality/subql-node-cosmos:latest
-    volumes:
-      - ./subql/:/app
-    working_dir: /app
-    entrypoint:
-      - sh
-    command:
-      - -c
-      - npm install ; npm run-script codegen ; npm run-script build
-
-  postgres:
-    build:
-      context: ./subql/
-      dockerfile: ./docker/pg-Dockerfile
-    ports:
-      - 5432:5432
-    volumes:
-      - ./subql/.data/postgres:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: postgres
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  subquery-node:
-    image: onfinality/subql-node-cosmos:latest
-    depends_on:
-      "postgres":
-        condition: service_healthy
-      local-migaloo:
-        condition: service_healthy
-      subquery-node-build:
-        condition: service_completed_successfully
-    restart: always
-    environment:
-      DB_USER: postgres
-      DB_PASS: postgres
-      DB_DATABASE: postgres
-      DB_HOST: postgres
-      DB_PORT: 5432
-    volumes:
-      - ./subql/:/app
-    command:
-      - ${SUB_COMMAND} # set SUB_COMMAND env variable to "test" to run tests
-      - -f=/app
-      - --db-schema=app
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://subquery-node:3000/ready" ]
-      interval: 3s
-      timeout: 5s
-      retries: 10
-
-  graphql-engine:
-    image: onfinality/subql-query:latest
-    ports:
-      - 3050:3000
-    depends_on:
-      "postgres":
-        condition: service_healthy
-      "subquery-node":
-        condition: service_healthy
-    restart: always
-    environment:
-      DB_USER: postgres
-      DB_PASS: postgres
-      DB_DATABASE: postgres
-      DB_HOST: postgres
-      DB_PORT: 5432
-    command:
-      - --name=app
-      # UI app for developing queries
-      # - --playground
-      - --indexer=http://subquery-node:3000
-
-  graphql-playground:
-    image: onfinality/subql-query:latest
-    ports:
-      - 3060:3000
-    depends_on:
-      "postgres":
-        condition: service_healthy
-      "subquery-node":
-        condition: service_healthy
-    restart: always
-    environment:
-      DB_USER: postgres
-      DB_PASS: postgres
-      DB_DATABASE: postgres
-      DB_HOST: postgres
-      DB_PORT: 5432
-    command:
-      - --name=app
-      # UI app for developing queries
-      - --playground
-      - --indexer=http://subquery-node:3000
 
 volumes:
   white_whale_furnace_cache:
