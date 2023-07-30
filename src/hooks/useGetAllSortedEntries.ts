@@ -2,16 +2,25 @@ import {useQuery} from 'react-query'
 import {CosmWasmClient} from '@cosmjs/cosmwasm-stargate'
 import chain from "../../public/config.json"
 import {useCosmWasmClient} from "@/hooks/useCosmwasmClient";
+import {foundationAddress} from "@/components/shared/constants";
 
 export const useGetAllSortedEntries = () => {
     const client = useCosmWasmClient();
 
-    return useQuery("useGetAllSortedEntries", () => fetchAllSortedEntries(client), {
+    return useQuery("useGetAllSortedEntries", () => fetchAllSortedEntries(client, false), {
         enabled: !!client,
     });
 };
 
-const fetchAllSortedEntries = async (client: CosmWasmClient | undefined) => {
+export const useGetSortedEntriesWithoutFoundation = () => {
+    const client = useCosmWasmClient();
+
+    return useQuery("useGetSortedEntriesWithoutFoundation", () => fetchAllSortedEntries(client, true), {
+        enabled: !!client,
+    });
+};
+
+const fetchAllSortedEntries = async (client: CosmWasmClient | undefined, isFoundationExcluded: boolean) => {
     if (!client) {
         return;
     }
@@ -29,5 +38,5 @@ const fetchAllSortedEntries = async (client: CosmWasmClient | undefined) => {
         });
         allEntries = [...allEntries, ...response]
     }
-    return allEntries.sort((a, b) => b[1] - a[1])
+    return isFoundationExcluded ? allEntries.sort((a, b) => b[1] - a[1]).filter((value)=>value[0] !== foundationAddress) : allEntries.sort((a, b) => b[1] - a[1])
 }

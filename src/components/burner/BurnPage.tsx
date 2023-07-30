@@ -12,7 +12,8 @@ import EllipticalShadow from "./EllipticalShadow";
 import Background from "../shared/Background";
 import Navbar from "../navbar/Navbar";
 import { MouseEventHandler, ReactNode } from "react";
-import { useTotalWhaleBurned } from "@/hooks/useTotalWhaleBurned";
+import { useWhaleBurned } from "@/hooks/useWhaleBurned";
+import { useWhaleSupply } from "@/hooks/useWhaleSupply";
 
 type DefaultBurnProps = {
   buttonText: string;
@@ -22,72 +23,87 @@ type DefaultBurnProps = {
 };
 
 const BurnPage = ({
-  buttonText,
-  onClick,
-  isDisabled,
-  children,
-}: DefaultBurnProps) => {
-
-  const totalWhaleBurned = useTotalWhaleBurned();
+                    buttonText,
+                    onClick,
+                    isDisabled,
+                    children,
+                  }: DefaultBurnProps) => {
+  const {totalBurned} = useWhaleBurned();
+  const totalWhaleSupply = useWhaleSupply();
 
   return (
-    <Background>
-      <Flex direction="column" height="100vh">
-        <Navbar />
-        <Spacer />
-        <Center>
-          <EllipticalShadow>
-            <VStack flex={4}>
-              <Text color="brandGreen" fontWeight={500} fontSize={20}>
-                WHALE Burner
-              </Text>
-              <Heading fontWeight={900} color="white" fontSize={72}>
-                The Furnace
-              </Heading>
-              <Box width={500} minHeight="255px">
-                {children}
-              </Box>
-              <Button
-                variant="primary"
-                onClick={onClick}
-                isDisabled={isDisabled}
-              >
-                {buttonText}
-              </Button>
-            </VStack>
-          </EllipticalShadow>
-        </Center>
-        <Spacer />
-        <Center minHeight="100px">
+      <Background>
+        <Flex direction="column" height="100vh">
+          <Navbar />
+          <Spacer />
+          <Center>
+            <EllipticalShadow>
+              <VStack flex={4}>
+                <Text color="brandGreen" fontWeight={500} fontSize={20}>
+                  WHALE Burner
+                </Text>
+                <Heading fontWeight={900} color="white" fontSize={72}>
+                  The Furnace
+                </Heading>
+                <Box width={500} minHeight="255px">
+                  {children}
+                </Box>
+                <Button
+                    variant="primary"
+                    onClick={onClick}
+                    isDisabled={isDisabled}
+                >
+                  {buttonText}
+                </Button>
+              </VStack>
+            </EllipticalShadow>
+          </Center>
+          <Spacer />
+          <Center minHeight="100px">
             <Flex>
               <Box
-                width="550px"
-                background="rgba(0, 0, 0, 0.8)"
-                padding={5}
-                borderRadius="10px"
-              >
+                  width="630px"
+                  background={"rgba(0, 0, 0, 0.8)"}
+                  padding={5}
+                  borderRadius="20px">
                 <Flex>
-                  <Heading flex={13} color="white" fontSize="28px">
+                  <Heading flex={13} color="white" fontSize="30px">
                     Total WHALE Burned:
                   </Heading>
-                  <Spacer flex={1} />
-                  <Box flex={6} minWidth="100px" minHeight="100%">
+                  <Spacer />
+                  <Box flex={6} minWidth="230px" minHeight="100%" >
                     <Heading
-                      color="brandGreen"
-                      fontSize="30px"
-                      textAlign="right">
-                      {totalWhaleBurned != null
-                        ? totalWhaleBurned.toFixed(0)
-                        : "-"}
+                        color="brandGreen"
+                        fontSize="30px"
+                        textAlign="end">
+                      {totalBurned != null && !isNaN(totalBurned)
+                          ? totalBurned.toLocaleString()
+                          : "-"}
+                    </Heading>
+                  </Box>
+                </Flex>
+                <Flex>
+                  <Heading flex={13} color="white" fontSize="30px">
+                    WHALE Supply:
+                  </Heading>
+                  <Spacer />
+                  <Box flex={6} minWidth="230px" minHeight="100%">
+                    <Heading
+                        color="brandGreen"
+                        fontSize="30px"
+                        textAlign="end">
+                      {totalWhaleSupply != null
+                          ? totalWhaleSupply.toLocaleString()
+                          : "-"}
                     </Heading>
                   </Box>
                 </Flex>
               </Box>
             </Flex>
-        </Center>
-        <Spacer />
-      </Flex>
-    </Background>
+          </Center>
+          <Spacer />
+        </Flex>
+      </Background>
   );
 };
 
