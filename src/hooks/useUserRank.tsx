@@ -1,9 +1,9 @@
 import {walletClientState} from "@/components/shared/state";
 import {useRecoilValue} from "recoil";
-import {useGetAllSortedEntries} from "@/hooks/useGetAllSortedEntries";
+import {useGetSortedEntriesWithoutFoundation} from "@/hooks/useGetAllSortedEntries";
 
 export const useUserRank = () => {
-    const {data} = useGetAllSortedEntries()
+    const {data} = useGetSortedEntriesWithoutFoundation()
 
     const walletClient = useRecoilValue(walletClientState);
 
