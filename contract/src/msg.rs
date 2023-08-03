@@ -1,15 +1,20 @@
 use crate::state::Config;
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Addr, Uint128};
+use cosmwasm_std::{Addr, Uint128, Decimal};
 
 #[cw_serde]
-pub struct InstantiateMsg {}
+pub struct InstantiateMsg {
+   pub fee_collector_addr: String,
+   pub burn_fee: Option<Decimal>,
+}
 
 #[cw_serde]
 pub enum ExecuteMsg {
     /// Updates contract's config, i.e. relevant code_ids, fee_collector address and owner
     UpdateConfig {
         owner: Option<String>,
+        fee_collector_addr: Option<String>,
+        burn_fee: Option<Decimal>,
     },
     Burn {},
 }

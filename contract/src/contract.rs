@@ -8,7 +8,7 @@ use crate::state::{Config, CONFIG, LEADERBOARD};
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
     coins, to_binary, Addr, BankMsg, Binary, CosmosMsg, Deps, DepsMut, Env, MessageInfo, Order,
-    Response, StdResult, Uint128,
+    Response, StdResult, Uint128, Decimal,
 };
 use cw2::{get_contract_version, set_contract_version};
 use cw_storage_plus::Bound;
@@ -18,19 +18,21 @@ use semver::Version;
 const CONTRACT_NAME: &str = "white_whale_furnace";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const MINT_SYMBOL: &str = "ash";
-
+const DEFAULT_BURN_FEE: Decimal = Decimal::one();
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    _msg: InstantiateMsg,
+    msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
 
     let config = Config {
         owner: deps.api.addr_validate(info.sender.as_str())?,
         mint_denom: format!("{}/{}/{}", "factory", env.contract.address, MINT_SYMBOL),
+        fee_collector_addr: deps.api.addr_validate(&msg.fee_collector_addr)?,
+        burn_fee: msg.burn_fee.unwrap_or(DEFAULT_BURN_FEE),
     };
 
     CONFIG.save(deps.storage, &config)?;
@@ -51,7 +53,7 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::UpdateConfig { owner } => update_config(deps, info, owner),
+        ExecuteMsg::UpdateConfig { owner, fee_collector_addr, burn_fee } => update_config(deps, info, owner, fee_collector_addr, burn_fee),
         ExecuteMsg::Burn {} => burn(deps, env, info),
     }
 }
@@ -61,6 +63,8 @@ pub fn update_config(
     deps: DepsMut,
     info: MessageInfo,
     owner: Option<String>,
+    fee_collector_addr: Option<String>,
+    burn_fee: Option<Decimal>,
 ) -> Result<Response, ContractError> {
     let mut config: Config = CONFIG.load(deps.storage)?;
 
@@ -72,6 +76,19 @@ pub fn update_config(
         // validate address format
         let _ = deps.api.addr_validate(&owner)?;
         config.owner = deps.api.addr_validate(&owner)?;
+    }
+
+    if let Some(fee_collector_addr) = fee_collector_addr {
+        // validate address format
+        config.fee_collector_addr = deps.api.addr_validate(&fee_collector_addr)?;
+    }
+
+    if let Some(burn_fee) = burn_fee {
+        // Note there is no real validation on bounds for this
+        // This would be an info issue in audit. 
+        // To remedy, someone needs to specify and upper and lower bound and it needs to be enforced here
+        // Given the burn fee is inflationary, it is not a huge concern as it will only affect the ash token
+        config.burn_fee = burn_fee;
     }
     CONFIG.save(deps.storage, &config)?;
 
@@ -106,6 +123,17 @@ pub fn burn(deps: DepsMut, env: Env, info: MessageInfo) -> Result<Response, Cont
         )?;
     } else {
         LEADERBOARD.save(deps.storage, &info.sender, &amount)?;
+    }
+
+    // If the fee_collect_addr is set, inflate the amount to mint, send the difference (fee) to the fee_collector_addr
+    // But dont return, after this we are going to mint the amount to the sender
+    if config.fee_collector_addr != Addr::unchecked("") {
+        let fee = amount * config.burn_fee;
+        let fee_amount = coins(fee.u128(), config.mint_denom.as_str());
+        messages.push(CosmosMsg::Bank(BankMsg::Send {
+            to_address: config.fee_collector_addr.to_string(),
+            amount: fee_amount.clone(),
+        }));
     }
 
     //mint ASH and transfer to sender
