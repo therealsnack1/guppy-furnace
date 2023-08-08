@@ -205,10 +205,20 @@ fn calc_range_start(start_after: Option<Addr>) -> Option<Vec<u8>> {
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+pub fn migrate(deps: DepsMut, _env: Env, msg: MigrateMsg) -> Result<Response, ContractError> {
     let version: Version = CONTRACT_VERSION.parse()?;
     let storage_version: Version = get_contract_version(deps.storage)?.version.parse()?;
+    let old_config = CONFIG.load(deps.storage)?; //load old config
+    let config = Config { // setup new one 
+        owner: old_config.owner,
+        mint_denom: old_config.mint_denom,
+        // The new fee_collector_addr and burn fee need to be set in MigrateMsg when migrating 
+        // The burn fee is non optional rn just for simplicity when migrating
+        fee_collector_addr: deps.api.addr_validate(&msg.fee_collector_addr)?,
+        burn_fee: msg.burn_fee.unwrap_or(DEFAULT_BURN_FEE),
+    };
 
+    CONFIG.save(deps.storage, &config)?;
     if storage_version >= version {
         return Err(ContractError::Unauthorized {});
     }
