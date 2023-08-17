@@ -1,0 +1,50 @@
+{
+  "chain_info": {
+    "chainId": "chihuahua-1",
+    "chainName": "chihuahua",
+    "rpc": "https://chihuahua-rpc.polkachu.com",
+    "rest": "https://chihuahua-api.polkachu.com",
+    "bip44": {
+      "coinType": 118
+    },
+    "bech32Config": {
+      "bech32PrefixAccAddr": "chihuahua",
+      "bech32PrefixAccPub": "chihuahuapub",
+      "bech32PrefixValAddr": "chihuahuavaloper",
+      "bech32PrefixValPub": "chihuahuavaloperpub",
+      "bech32PrefixConsAddr": "chihuahuavalcons",
+      "bech32PrefixConsPub": "chihuahuavalconspub"
+    },
+    "currencies": [
+      {
+        "coinDenom": "HUAHUA",
+        "coinMinimalDenom": "uhuahua",
+        "coinDecimals": 6,
+        "coinGeckoId": "chihuahua-chain"
+      }
+    ],
+    "feeCurrencies": [
+      {
+        "coinDenom": "HUAHUA",
+        "coinMinimalDenom": "uhuahua",
+        "coinDecimals": 6,
+        "coinGeckoId": "chihuahua-chain",
+        "gasPriceStep": {
+          "low": 0,
+          "average": 0,
+          "high": 0
+        }
+      }
+    ],
+    "stakeCurrency": {
+      "coinDenom": "HUAHUA",
+      "coinMinimalDenom": "uhuahua",
+      "coinDecimals": 6,
+      "coinGeckoId": "chihuahua-chain"
+    },
+    "features": [
+      "cosmwasm"
+    ]
+  },
+  "furnace_contract_address": "TBD"
+}
