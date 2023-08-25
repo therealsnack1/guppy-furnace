@@ -43,10 +43,3 @@ const MyApp = ({
 };
 
 export default MyApp;
-
-MyApp.getInitialProps = async () => {
-  const chainOptions = await getChainOptions();
-  return {
-    ...chainOptions,
-  };
-};
