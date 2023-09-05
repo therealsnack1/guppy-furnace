@@ -12,6 +12,9 @@ pub enum ContractError {
     #[error("Wrong token")]
     IncorrectToken {},
 
+    #[error("When not using CW20 as an input token to be burned a native denom for the native token must be provided, this is so it can be checked when a burn is done")]
+    MissingNativeDenom {},
+
     #[error("Wrong number of tokens")]
     IncorrectTokenQuantity {},
 

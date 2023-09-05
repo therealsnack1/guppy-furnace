@@ -1,11 +1,16 @@
 use crate::state::Config;
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Addr, Uint128, Decimal};
+use cosmwasm_std::{Addr, Decimal, Uint128};
+use cw20::Cw20ReceiveMsg;
 
 #[cw_serde]
 pub struct InstantiateMsg {
-   pub fee_collector_addr: String,
-   pub burn_fee: Option<Decimal>,
+    pub fee_collector_addr: String,
+    pub burn_fee: Option<Decimal>,
+    pub use_cw20: Option<bool>,
+    pub token_code_id: Option<u64>,
+    pub burn_cw20_addr: Option<String>,
+    pub native_denom: Option<String>,
 }
 
 #[cw_serde]
@@ -17,6 +22,14 @@ pub enum ExecuteMsg {
         burn_fee: Option<Decimal>,
     },
     Burn {},
+    /// Used to trigger the [Cw20HookMsg] messages; burning CW20s instead of native tokens
+    Receive(Cw20ReceiveMsg),
+}
+
+#[cw_serde]
+pub enum Cw20HookMsg {
+    /// Burn a already setup CW20 for ASH
+    BurnCw20 {},
 }
 
 #[cw_serde]
@@ -39,6 +52,7 @@ pub enum QueryMsg {
 pub struct MigrateMsg {
     pub fee_collector_addr: String,
     pub burn_fee: Option<Decimal>,
+    pub native_denom: Option<String>,
 }
 
 pub type ConfigResponse = Config;

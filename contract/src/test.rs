@@ -1,20 +1,18 @@
-use cosmwasm_std::testing::{
-    mock_dependencies, mock_env, mock_info, MockStorage, MOCK_CONTRACT_ADDR,
-};
+use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info, MOCK_CONTRACT_ADDR};
 use cosmwasm_std::CosmosMsg::Stargate;
 use cosmwasm_std::{
-    coin, from_binary, Addr, BankMsg, Binary, CosmosMsg, Order, ReplyOn, StdResult, SubMsg, Uint128, Decimal,
+    coin, from_binary, to_binary, Addr, BankMsg, Binary, CosmosMsg, Decimal, ReplyOn, SubMsg,
+    Uint128,
 };
-use cw_storage_plus::{Bound, Map};
+use cw20::Cw20ReceiveMsg;
 
 use crate::contract::{execute, instantiate, query, MINT_SYMBOL};
 use crate::denom::{MsgCreateDenom, MsgMint};
+use crate::mock_querier::mock_dependencies as mock_dependencies_querier;
 use crate::msg::ExecuteMsg::UpdateConfig;
-use crate::msg::{ExecuteMsg, InstantiateMsg, LeaderboardResponse, QueryMsg};
+use crate::msg::{Cw20HookMsg, ExecuteMsg, InstantiateMsg, LeaderboardResponse, QueryMsg};
 use crate::state::{Config, LEADERBOARD};
 use crate::{denom, ContractError};
-use cosmwasm_schema::cw_serde;
-
 #[cfg(test)]
 mod tests {}
 
@@ -32,6 +30,10 @@ fn proper_initialization() {
     let msg = InstantiateMsg {
         fee_collector_addr: "addr0000".to_string(),
         burn_fee: Some(Decimal::percent(1)),
+        use_cw20: None,
+        token_code_id: None,
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
     };
     let res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
 
@@ -69,6 +71,10 @@ fn burn_execute() {
     let msg = InstantiateMsg {
         fee_collector_addr: "addr0000".to_string(),
         burn_fee: Some(Decimal::percent(1)),
+        use_cw20: None,
+        token_code_id: None,
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
 
@@ -113,6 +119,193 @@ fn burn_execute() {
     assert_eq!(bank_send_msg, bank_send_msg_expected);
 }
 
+// test with a cw20 as the burn asset instead of native tokens
+#[test]
+fn burn_cw20_for_native_ash() {
+    let mut deps = mock_dependencies_querier(&[]);
+
+    deps.querier.with_token_balances(&[
+        (
+            &String::from("mytoken"),
+            &[(
+                &String::from("addr0000"),
+                &Uint128::new(100_000000000000000000),
+            )],
+        ),
+        (
+            &String::from("mytoken"),
+            &[(
+                &String::from("addr0000"),
+                &Uint128::new(100_000000000000000000),
+            )],
+        ),
+    ]);
+
+    let env = mock_env();
+    let info = mock_info(
+        "addr0000",
+        &[cosmwasm_std::Coin {
+            denom: "uwhale".to_string(),
+            amount: Uint128::from(100u32),
+        }],
+    );
+    let msg = InstantiateMsg {
+        fee_collector_addr: "addr0000".to_string(),
+        burn_fee: Some(Decimal::percent(1)),
+        use_cw20: Some(true),
+        token_code_id: Some(1u64),
+        burn_cw20_addr: Some("mock_cw20".to_string()),
+        native_denom: Some("uwhale".to_string()),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+
+    let receive_msg = ExecuteMsg::Receive(Cw20ReceiveMsg {
+        sender: "addr0000".to_string(),
+        amount: Uint128::from(100u32),
+        msg: to_binary(&Cw20HookMsg::BurnCw20 {}).unwrap(),
+    });
+    let env = mock_env();
+    let info = mock_info("addr0000", &[]);
+    let res = execute(deps.as_mut(), env, info, receive_msg).unwrap();
+
+    assert_eq!(res.messages.len(), 4usize);
+
+    let burn_whale_msg = res.messages.get(0).expect("no message").clone().msg;
+    let mint_msg = res.messages.get(2).expect("no message").clone().msg;
+    let bank_send_msg = res.messages.get(3).expect("no message").clone().msg;
+
+    let burn_whale_msg_expected = CosmosMsg::Wasm(cosmwasm_std::WasmMsg::Execute {
+        contract_addr: "mock_cw20".to_string(),
+        msg: to_binary(&cw20::Cw20ExecuteMsg::Burn {
+            amount: Uint128::from(100u128),
+        })
+        .unwrap(),
+        funds: [].into(),
+    });
+
+    let mint_msg_expected = CosmosMsg::Wasm(cosmwasm_std::WasmMsg::Execute {
+        contract_addr: "02B929945C3E637AC76AD062C703D3ED37171A198CB4E20ABCEC8540D32F947B"
+            .to_string(),
+        msg: to_binary(&cw20::Cw20ExecuteMsg::Mint {
+            recipient: "cosmos2contract".to_string(),
+            amount: Uint128::from(100u128),
+        })
+        .unwrap(),
+        funds: [].into(),
+    });
+
+    let bank_send_msg_expected = CosmosMsg::Wasm(cosmwasm_std::WasmMsg::Execute {
+        contract_addr: "02B929945C3E637AC76AD062C703D3ED37171A198CB4E20ABCEC8540D32F947B"
+            .to_string(),
+        msg: to_binary(&cw20::Cw20ExecuteMsg::Transfer {
+            recipient: "addr0000".to_string(),
+            amount: Uint128::from(100u128),
+        })
+        .unwrap(),
+        funds: [].into(),
+    });
+
+    assert_eq!(burn_whale_msg, burn_whale_msg_expected);
+
+    assert_eq!(mint_msg, mint_msg_expected);
+
+    assert_eq!(bank_send_msg, bank_send_msg_expected);
+}
+
+//test burn message
+#[test]
+fn burn_execute_cw20_received() {
+    let mut deps = mock_dependencies_querier(&[]);
+
+    deps.querier.with_token_balances(&[
+        (
+            &String::from("mytoken"),
+            &[(
+                &String::from("addr0000"),
+                &Uint128::new(100_000000000000000000),
+            )],
+        ),
+        (
+            &String::from("mytoken"),
+            &[(
+                &String::from("addr0000"),
+                &Uint128::new(100_000000000000000000),
+            )],
+        ),
+    ]);
+
+    let env = mock_env();
+    let info = mock_info(
+        "addr0000",
+        &[cosmwasm_std::Coin {
+            denom: "uwhale".to_string(),
+            amount: Uint128::from(100u32),
+        }],
+    );
+    let msg = InstantiateMsg {
+        fee_collector_addr: "addr0000".to_string(),
+        burn_fee: Some(Decimal::percent(1)),
+        use_cw20: Some(true),
+        token_code_id: Some(1u64),
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
+    };
+    let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
+
+    let receive_msg = ExecuteMsg::Receive(Cw20ReceiveMsg {
+        sender: "addr0000".to_string(),
+        amount: Uint128::from(100u32),
+        msg: to_binary(&Cw20HookMsg::BurnCw20 {}).unwrap(),
+    });
+    let env = mock_env();
+    let info = mock_info(
+        "addr0000",
+        &[cosmwasm_std::Coin {
+            denom: "uwhale".to_string(),
+            amount: Uint128::from(1000u32),
+        }],
+    );
+    let res = execute(deps.as_mut(), env, info, receive_msg).unwrap();
+
+    assert_eq!(res.messages.len(), 4usize);
+
+    let burn_whale_msg = res.messages.get(0).expect("no message").clone().msg;
+    let mint_msg = res.messages.get(2).expect("no message").clone().msg;
+    let bank_send_msg = res.messages.get(3).expect("no message").clone().msg;
+
+    let burn_whale_msg_expected = CosmosMsg::Bank(BankMsg::Burn {
+        amount: vec![coin(1000u128, "uwhale".to_string())],
+    });
+
+    let mint_msg_expected = CosmosMsg::Wasm(cosmwasm_std::WasmMsg::Execute {
+        contract_addr: "02B929945C3E637AC76AD062C703D3ED37171A198CB4E20ABCEC8540D32F947B"
+            .to_string(),
+        msg: to_binary(&cw20::Cw20ExecuteMsg::Mint {
+            recipient: "cosmos2contract".to_string(),
+            amount: Uint128::from(100u128),
+        })
+        .unwrap(),
+        funds: [].into(),
+    });
+
+    let bank_send_msg_expected = CosmosMsg::Wasm(cosmwasm_std::WasmMsg::Execute {
+        contract_addr: "02B929945C3E637AC76AD062C703D3ED37171A198CB4E20ABCEC8540D32F947B"
+            .to_string(),
+        msg: to_binary(&cw20::Cw20ExecuteMsg::Transfer {
+            recipient: "addr0000".to_string(),
+            amount: Uint128::from(100u128),
+        })
+        .unwrap(),
+        funds: [].into(),
+    });
+
+    assert_eq!(burn_whale_msg, burn_whale_msg_expected);
+
+    assert_eq!(mint_msg, mint_msg_expected);
+
+    assert_eq!(bank_send_msg, bank_send_msg_expected);
+}
+
 #[test]
 fn burn_invalid() {
     let mut deps = mock_dependencies();
@@ -127,6 +320,10 @@ fn burn_invalid() {
     let msg = InstantiateMsg {
         fee_collector_addr: "addr0000".to_string(),
         burn_fee: Some(Decimal::percent(1)),
+        use_cw20: None,
+        token_code_id: None,
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
 
@@ -175,6 +372,10 @@ fn test_update_config() {
     let msg = InstantiateMsg {
         fee_collector_addr: "addr0000".to_string(),
         burn_fee: Some(Decimal::percent(1)),
+        use_cw20: None,
+        token_code_id: None,
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
 
@@ -224,6 +425,10 @@ fn test_leaderboard_query() {
     let msg = InstantiateMsg {
         fee_collector_addr: "addr0000".to_string(),
         burn_fee: Some(Decimal::percent(1)),
+        use_cw20: None,
+        token_code_id: None,
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
     };
     instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
 
@@ -306,6 +511,10 @@ fn test_burn_tax_feature() {
     let msg = InstantiateMsg {
         fee_collector_addr: "addr0001".to_string(),
         burn_fee: Some(Decimal::percent(1)),
+        use_cw20: None,
+        token_code_id: None,
+        burn_cw20_addr: None,
+        native_denom: Some("uwhale".to_string()),
     };
     let _res = instantiate(deps.as_mut(), env.clone(), info, msg).unwrap();
 
@@ -355,5 +564,4 @@ fn test_burn_tax_feature() {
     assert_eq!(mint_msg, mint_msg_expected);
 
     assert_eq!(bank_send_msg, bank_send_msg_expected);
-
 }
