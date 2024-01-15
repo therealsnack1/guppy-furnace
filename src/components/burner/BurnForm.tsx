@@ -15,7 +15,7 @@ const BurnForm = ({ handleChange, hasInsufficientWhale }: BurnFormProps) => {
       <BurnInput
         label="You burn"
         tokenLabel="GUPPY"
-        tokenIcon="icons/whale-icon.svg"
+        tokenIcon="icons/guppy.png"
         isReadOnly={false}
         onChange={(valueAsString: string, valueAsNumber: number) => {
           setBurnValueAsString(valueAsString);
