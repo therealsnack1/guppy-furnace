@@ -96,10 +96,10 @@ export default function LeaderboardPage() {
                               ? `#${userRankData}`
                               : "-"
                         }
-                        dataColor="brandGreen"
+                        dataColor="brandBlue"
                     />
                     <DetailsField
-                        label="My Ash Tokens"
+                        label="My Guppy Tokens"
                         data={walletClient != null ? ashBalance.toFixed(3) : "-"}
                     />
                   </DetailsDisplay>
