@@ -31,7 +31,7 @@ const BurnForm = ({ handleChange, hasInsufficientWhale }: BurnFormProps) => {
       <BurnInput
         label="You get"
         tokenLabel="ASH"
-        tokenIcon="icons/ash-icon.svg"
+        tokenIcon="icons/gash.png"
         isReadOnly={true}
         value={burnValueAsString}
       />

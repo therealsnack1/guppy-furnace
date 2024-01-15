@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <link rel="shortcut icon" href="/icons/ash-icon.svg" />
+        <link rel="shortcut icon" href="/icons/gash.png" />
         <meta charSet="utf-8" />
         <meta name="terra-wallet" />
         <meta name="theme-color" content="#000000" />
