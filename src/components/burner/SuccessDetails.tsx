@@ -27,7 +27,7 @@ const SuccessDetails = ({ whaleBurned }: SuccessDetailsProps) => {
             Success!
           </Text>
           <SuccessDetailField
-            label="WHALE Burned"
+            label="GUPPY Burned"
             value={whaleBurned.toFixed(3)}
           />
           <SuccessDetailField

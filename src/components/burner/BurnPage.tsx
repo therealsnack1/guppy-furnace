@@ -68,7 +68,7 @@ const BurnPage = ({
                   borderRadius="20px">
                 <Flex>
                   <Heading flex={13} color="white" fontSize="30px">
-                    Total WHALE Burned:
+                    Total GUPPY Burned:
                   </Heading>
                   <Spacer />
                   <Box flex={6} minWidth="230px" minHeight="100%" >
