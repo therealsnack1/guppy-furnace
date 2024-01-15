@@ -84,7 +84,7 @@ const BurnPage = ({
                 </Flex>
                 <Flex>
                   <Heading flex={13} color="white" fontSize="30px">
-                    WHALE Supply:
+                    GUPPY Supply:
                   </Heading>
                   <Spacer />
                   <Box flex={6} minWidth="230px" minHeight="100%">
