@@ -8,7 +8,7 @@ export default function Document() {
         <meta charSet="utf-8" />
         <meta name="terra-wallet" />
         <meta name="theme-color" content="#000000" />
-        <meta name="description" content="White Whale Furnace" />
+        <meta name="description" content="Guppy Furnace" />
       </Head>
       <title>The Furnace</title>
       <body>
