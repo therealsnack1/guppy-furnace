@@ -13,6 +13,7 @@ export enum BurningState {
   success,
 }
 
+
 export const burningState = atom<BurningState>({
   key: "burningState",
   default: BurningState.userInput,
