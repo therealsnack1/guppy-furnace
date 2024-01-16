@@ -33,9 +33,9 @@ const ConnectModal = ({ isOpen, onClose }: ConnectModalProps) => {
       availableWallets.push(WalletClientType.leap);
     }
 
-    if (window.isTerraExtensionAvailable) {
-      availableWallets.push(WalletClientType.terrastation);
-    }
+    //if (window.isTerraExtensionAvailable) {
+    //  availableWallets.push(WalletClientType.terrastation);
+    //  }
   }
 
   return (
