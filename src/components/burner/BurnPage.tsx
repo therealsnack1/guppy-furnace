@@ -39,7 +39,7 @@ const BurnPage = ({
           <Center>
             <EllipticalShadow>
               <VStack flex={4}>
-                <Text color="brandBlue" fontWeight={500} fontSize={20}>
+                <Text color="brandWhite" fontWeight={500} fontSize={30}>
                   GUPPY Burner
                 </Text>
                 <Heading fontWeight={900} color="white" fontSize={72}>
