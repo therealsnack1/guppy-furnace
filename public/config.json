@@ -1,9 +1,9 @@
 {
   "chain_info": {
-    "chainId": "local-1",
-    "chainName": "local_migaloo",
-    "rpc": "http://127.0.0.1:26657",
-    "rest": "http://127.0.0.1:1317",
+    "chainId": "migaloo-1",
+    "chainName": "migaloo",
+    "rpc": "https://migaloo-rpc.polkachu.com",
+    "rest": "https://migaloo-api.polkachu.com",
     "bip44": {
       "coinType": 118
     },
@@ -46,5 +46,5 @@
       "cosmwasm"
     ]
   },
-  "furnace_contract_address": ""
+  "furnace_contract_address": "migaloo1r9x8fz4alekzr78k42rpmr9unpa7egsldpqeynmwl2nfvzexue9sn8l5rg"
 }

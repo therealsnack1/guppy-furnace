@@ -23,6 +23,11 @@ export const whaleBalanceState = atom<number>({
   default: 0,
 })
 
+export const realwhaleBalanceState = atom<number>({
+  key: "realwhaleBalanceState",
+  default: 0,
+})
+
 export const ashBalanceState = atom<number>({
   key: "ashBalanceState",
   default: 0,

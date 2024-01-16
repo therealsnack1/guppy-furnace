@@ -72,7 +72,7 @@ export default function Home() {
       if (!toast.isActive(id)) {
         toast({
           description:
-            "Error burning WHALE. Make sure you confirm the transaction from your wallet extension.",
+            "Error burning Guppy. Make sure you confirm the transaction from your wallet extension.",
           id: id,
           duration: 10000,
           position: "top",
@@ -91,7 +91,7 @@ export default function Home() {
     case BurningState.userInput:
       return (
         <BurnPage
-          buttonText="Burn WHALE"
+          buttonText="Burn Guppy"
           onClick={onBurnWhales}
           isDisabled={!isConnected}
         >
@@ -102,7 +102,7 @@ export default function Home() {
         </BurnPage>
       );
     case BurningState.burning:
-      return <BurnPage buttonText="Burning WHALE..." />;
+      return <BurnPage buttonText="Burning Guppy..." />;
     case BurningState.success:
       return (
         <BurnPage buttonText="Back to Burn" onClick={onClickBack}>
