@@ -31,11 +31,11 @@ const SuccessDetails = ({ whaleBurned }: SuccessDetailsProps) => {
             value={whaleBurned.toFixed(3)}
           />
           <SuccessDetailField
-            label="ASH Received"
+            label="gASH Received"
             value={whaleBurned.toFixed(3)}
           />
           <SuccessDetailField
-            label="Current ASH Balance"
+            label="Current gASH Balance"
             value={(ashBalance + whaleBurned).toFixed(3)}
           />
         </VStack>

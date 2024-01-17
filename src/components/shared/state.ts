@@ -13,6 +13,7 @@ export enum BurningState {
   success,
 }
 
+
 export const burningState = atom<BurningState>({
   key: "burningState",
   default: BurningState.userInput,
@@ -20,6 +21,11 @@ export const burningState = atom<BurningState>({
 
 export const whaleBalanceState = atom<number>({
   key: "whaleBalanceState",
+  default: 0,
+})
+
+export const realwhaleBalanceState = atom<number>({
+  key: "realwhaleBalanceState",
   default: 0,
 })
 

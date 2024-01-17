@@ -13,7 +13,7 @@ import { IoMdWallet, IoMdCloseCircle } from "react-icons/io";
 import ConnectModal from "../connect/ConnectModal";
 import { useRecoilState } from "recoil";
 import { walletClientState } from "../shared/state";
-import { useWhaleBalance } from "@/hooks/useWhaleBalance";
+import { useRealWhaleBalance } from "@/hooks/useWhaleBalance";
 import { truncateAddress } from "@/utils/truncateAddress";
 import WalletIcon from "../shared/WalletIcon";
 import { useConfig } from "@/hooks/useConfig";
@@ -22,7 +22,7 @@ import { ChainInfo } from "@keplr-wallet/types";
 const WalletInfo = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [walletClient, setWalletClient] = useRecoilState(walletClientState);
-  const balance = useWhaleBalance();
+  const balance = useRealWhaleBalance();
 
   const disconnectAndResetWalletState = async () => {
     await walletClient?.disconnect();
