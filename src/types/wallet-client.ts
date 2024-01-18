@@ -22,7 +22,7 @@ export abstract class WalletClient {
   public abstract furnaceContractAddress: string;
   public abstract chainInfo: ChainInfo;
 
-  public get ashDenom() { return `factory/${this.furnaceContractAddress}/ugash` };
+  public get ashDenom() { return `factory/migaloo1r9x8fz4alekzr78k42rpmr9unpa7egsldpqeynmwl2nfvzexue9sn8l5rg/gash` };
 
   abstract getBalance(denom: String): Promise<number>
 

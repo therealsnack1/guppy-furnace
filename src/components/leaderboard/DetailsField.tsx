@@ -9,7 +9,7 @@ type DetailsFieldProps = {
 const DetailsField = ({ label, data, dataColor }: DetailsFieldProps) => {
     return (
         <Flex minWidth={'250px'}>
-            <Text color="lightGray" fontSize="16px" flex={5}>
+            <Text color="white" fontSize="16px" flex={5}>
                 {label}
             </Text>
             <Text color={dataColor} fontSize="16px" flex={3} align="right">

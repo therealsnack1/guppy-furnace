@@ -71,7 +71,7 @@ export default function LeaderboardPage() {
                         }
                     />
                     <DetailsField
-                        label="Foundation Burn"
+                        label="ASH DAO Burn"
                         data={
                           foundationBurn != null && !isNaN(foundationBurn)
                               ? foundationBurn.toLocaleString()
@@ -96,10 +96,9 @@ export default function LeaderboardPage() {
                               ? `#${userRankData}`
                               : "-"
                         }
-                        dataColor="brandBlue"
                     />
                     <DetailsField
-                        label="My Guppy Tokens"
+                        label="My gASH Tokens"
                         data={walletClient != null ? ashBalance.toFixed(3) : "-"}
                     />
                   </DetailsDisplay>
