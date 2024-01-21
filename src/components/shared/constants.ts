@@ -8,4 +8,5 @@ export const KNOWN_ADDRESSES = {
   'migaloo1gn6e0krr2fvuyfw4xu2d935vjj4u0xxa85udnp': 'Ginkou',
   'migaloo1eqntnl6tzcj9h86psg4y4h6hh05g2h9nj8e09l': 'Racoon Bet',
   'migaloo150alghj63l2p2wscymh3xr053eu9d95vs0s8zjtru89enjscn32s7yytx7': 'Migaloo Paint',
+  'migaloo1eudcu5n4ln6endlnc6cmmp0a056la0whqrcyps': 'CrazyWhiteBoy',
 }
