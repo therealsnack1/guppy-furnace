@@ -36,6 +36,6 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@keplr-wallet/types": "^0.12.5"
+    "@keplr-wallet/types": "^0.12.74"
   }
 }
